@@ -1,5 +1,52 @@
 {% extends 'layout.html' %}
-{% block title %}RSVP{% endblock %}
+{% load crispy_forms_tags %}
+{% block title %}RSVP - {{ birthday }}{% endblock %}
 {% block content %}
-    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <h2>Your RSVP</h2>
+                <hr/>
+                <form action="{% url 'rsvp' birthday.id %}" method="post">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-block btn-success">RSVP</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <h2>Currently Attending</h2>
+                <hr/>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Attendee Name</th>
+                            <th>Attendee Email Address</th>
+                            <th>Attendee Number</th>
+                            <th>Having Refreshments?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if rsvps|length > 0 %}
+                        {% for a in rsvps %}
+                            <tr>
+                                <td>{{ a.rsvp_name }}</td>
+                                <td>{{ a.rsvp_email }}</td>
+                                <td>{{ a.rsvp_number }}</td>
+                                <td>{{ a.having_refreshments|yesno:'Yes,No' }}</td>
+                            </tr>
+                        {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4">
+                                    <p class="text-center text-muted">Nobody has RSVP'd yet</p>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}
